@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, useAnimation, useScroll } from "framer-motion";
 import { Link, useRouteMatch } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11,7 +11,6 @@ const Nav = styled.nav`
   width: 100%;
   top: 0;
   left: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
@@ -70,7 +69,14 @@ const Circle = styled(motion.span)`
 const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
-  right: 240px;
+  right: 205px;
+  padding: 5px 10px;
+  padding-left: 40px;
+  z-index: -1;
+  color: white;
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid ${(props) => props.theme.white.lighter};
 `;
 
 const logoVariants = {
@@ -85,16 +91,41 @@ const logoVariants = {
   },
   normal: { fillOpacity: 1 },
 };
+const navVariants = {
+  up: { backgroundColor: "rgba(0,0,0,0)" },
+  scroll: { backgroundColor: "rgba(0,0,0,1)" },
+};
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useRouteMatch("/");
   const tvMatch = useRouteMatch("/tv");
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const { scrollY } = useScroll();
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() > 80) {
+        navAnimation.start("scroll");
+      } else {
+        navAnimation.start("up");
+      }
+    });
+  }, [scrollY]);
   const toggleSearch = () => {
+    if (searchOpen) {
+      inputAnimation.start({
+        scaleX: 0,
+      });
+    } else {
+      inputAnimation.start({
+        scaleX: 1,
+      });
+    }
     setSearchOpen((prev) => !prev);
   };
   return (
-    <Nav>
+    <Nav variants={navVariants} animate={navAnimation} initial="up">
       <Col>
         <Logo
           variants={logoVariants}
@@ -140,8 +171,9 @@ function Header() {
           </motion.svg>
         </Search>
         <Input
+          animate={inputAnimation}
           transition={{ type: "linear" }}
-          animate={{ scaleX: searchOpen ? 1 : 0 }}
+          initial={{ scaleX: 0 }}
           placeholder="Search for movie or tv show..."
         />
       </Col>
