@@ -10,7 +10,6 @@ const Nav = styled(motion.nav)`
   position: fixed;
   width: 100%;
   top: 0;
-  left: 0;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
@@ -18,7 +17,6 @@ const Nav = styled(motion.nav)`
 const Col = styled.div`
   display: flex;
   align-items: center;
-  padding-right: 150px;
 `;
 const Logo = styled(motion.svg)`
   margin-right: 50px;
@@ -69,7 +67,7 @@ const Circle = styled(motion.span)`
 const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
-  right: 205px;
+  right: 55px;
   padding: 5px 10px;
   padding-left: 40px;
   z-index: -1;
