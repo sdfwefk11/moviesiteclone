@@ -38,7 +38,7 @@ const Slider = styled.div`
 `;
 const Row = styled(motion.div)`
   display: grid;
-  gap: 10px;
+  gap: 5px;
   grid-template-columns: repeat(6, 1fr);
   position: absolute;
   width: 100%;
@@ -52,12 +52,12 @@ const Box = styled(motion.div)`
 
 const rowVariants = {
   hidden: {
-    x: window.outerWidth + 10,
+    x: window.outerWidth + 5,
   },
   visible: {
     x: 0,
   },
-  exit: { x: -window.outerWidth - 10 },
+  exit: { x: -window.outerWidth - 5 },
 };
 
 function Home() {
@@ -67,7 +67,13 @@ function Home() {
   );
   const [index, setIndex] = useState(0);
   const increaseIndex = () => {
+    if (leaving) return;
+    toggleLeaving();
     setIndex((prev) => prev + 1);
+  };
+  const [leaving, setLeaving] = useState(false);
+  const toggleLeaving = () => {
+    setLeaving((prev) => !prev);
   };
   return (
     <Wrapper>
@@ -83,7 +89,7 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <AnimatePresence>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={index}
                 variants={rowVariants}
