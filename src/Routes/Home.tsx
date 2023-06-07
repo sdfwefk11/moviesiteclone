@@ -43,13 +43,14 @@ const Row = styled(motion.div)`
   position: absolute;
   width: 100%;
 `;
-const Box = styled(motion.div)`
+const Box = styled(motion.div)<{ bgImg: string }>`
   background-color: white;
+  background-image: url(${(props) => props.bgImg});
+  background-size: cover;
+  background-position: center center;
   height: 100px;
-  color: red;
   font-size: 40px;
 `;
-
 const rowVariants = {
   hidden: {
     x: window.outerWidth + 5,
@@ -60,6 +61,8 @@ const rowVariants = {
   exit: { x: -window.outerWidth - 5 },
 };
 
+const offset = 6;
+
 function Home() {
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
@@ -67,9 +70,13 @@ function Home() {
   );
   const [index, setIndex] = useState(0);
   const increaseIndex = () => {
-    if (leaving) return;
-    toggleLeaving();
-    setIndex((prev) => prev + 1);
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.ceil(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
   };
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => {
@@ -98,9 +105,15 @@ function Home() {
                 animate="visible"
                 exit="exit"
               >
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <Box key={item}>{item}</Box>
-                ))}
+                {data?.results
+                  .slice(1)
+                  .slice(offset * index, offset * index + offset)
+                  .map((item) => (
+                    <Box
+                      key={item.id}
+                      bgImg={makeImagePath(item.backdrop_path, "w500")}
+                    />
+                  ))}
               </Row>
             </AnimatePresence>
           </Slider>
