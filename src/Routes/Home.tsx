@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const Wrapper = styled.div`
   background-color: black;
+  padding-bottom: 200px;
 `;
 const Loader = styled.div`
   height: 200vh;
@@ -20,7 +21,7 @@ const Banner = styled.div<{ bgImg: string }>`
   flex-direction: column;
   justify-content: center;
   padding: 60px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9)),
     url(${(props) => props.bgImg});
   background-size: cover;
 `;
@@ -48,9 +49,16 @@ const Box = styled(motion.div)<{ bgImg: string }>`
   background-image: url(${(props) => props.bgImg});
   background-size: cover;
   background-position: center center;
-  height: 100px;
+  height: 200px;
   font-size: 40px;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `;
+
 const rowVariants = {
   hidden: {
     x: window.outerWidth + 5,
@@ -59,6 +67,16 @@ const rowVariants = {
     x: 0,
   },
   exit: { x: -window.outerWidth - 5 },
+};
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
+    y: -40,
+  },
 };
 
 const offset = 6;
@@ -74,7 +92,7 @@ function Home() {
       if (leaving) return;
       toggleLeaving();
       const totalMovies = data.results.length - 1;
-      const maxIndex = Math.ceil(totalMovies / offset) - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
@@ -100,7 +118,7 @@ function Home() {
               <Row
                 key={index}
                 variants={rowVariants}
-                transition={{ type: "tween", duration: 1 }}
+                transition={{ type: "tween", duration: 0.5 }}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -110,7 +128,11 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((item) => (
                     <Box
+                      variants={boxVariants}
                       key={item.id}
+                      whileHover="hover"
+                      initial="normal"
+                      transition={{ type: "tween" }}
                       bgImg={makeImagePath(item.backdrop_path, "w500")}
                     />
                   ))}
