@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   padding-bottom: 200px;
 `;
 const Loader = styled.div`
-  height: 200vh;
+  height: 20vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -58,6 +58,18 @@ const Box = styled(motion.div)<{ bgImg: string }>`
     transform-origin: center right;
   }
 `;
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
+`;
 
 const rowVariants = {
   hidden: {
@@ -75,7 +87,13 @@ const boxVariants = {
   hover: {
     scale: 1.3,
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
-    y: -40,
+    y: -80,
+  },
+};
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
   },
 };
 
@@ -134,7 +152,11 @@ function Home() {
                       initial="normal"
                       transition={{ type: "tween" }}
                       bgImg={makeImagePath(item.backdrop_path, "w500")}
-                    />
+                    >
+                      <Info variants={infoVariants}>
+                        <h4>{item.title}</h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
