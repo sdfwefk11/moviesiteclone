@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -21,7 +22,7 @@ const Banner = styled.div<{ bgImg: string }>`
   flex-direction: column;
   justify-content: center;
   padding: 60px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)),
     url(${(props) => props.bgImg});
   background-size: cover;
 `;
@@ -51,6 +52,7 @@ const Box = styled(motion.div)<{ bgImg: string }>`
   background-position: center center;
   height: 200px;
   font-size: 40px;
+  cursor: pointer;
   &:first-child {
     transform-origin: center left;
   }
@@ -100,6 +102,8 @@ const infoVariants = {
 const offset = 6;
 
 function Home() {
+  const history = useHistory();
+  const bigMovieMatch = useRouteMatch("/movies/:movieId");
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -118,6 +122,10 @@ function Home() {
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
+  const onBoxClicked = (movieId: number) => {
+    history.push(`/movies/${movieId}`);
+  };
+  console.log(bigMovieMatch);
   return (
     <Wrapper>
       {isLoading ? (
@@ -146,6 +154,7 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((item) => (
                     <Box
+                      onClick={() => onBoxClicked(item.id)}
                       variants={boxVariants}
                       key={item.id}
                       whileHover="hover"
