@@ -103,7 +103,7 @@ const offset = 6;
 
 function Home() {
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch("/movies/:movieId");
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -154,6 +154,7 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((item) => (
                     <Box
+                      layoutId={item.id + ""}
                       onClick={() => onBoxClicked(item.id)}
                       variants={boxVariants}
                       key={item.id}
@@ -170,6 +171,23 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {bigMovieMatch ? (
+              <motion.div
+                layoutId={bigMovieMatch.params.movieId}
+                style={{
+                  position: "absolute",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "red",
+                  top: 30,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                }}
+              />
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
