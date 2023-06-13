@@ -88,7 +88,6 @@ const BigMovie = styled(motion.div)<{ bigMovieTop: number }>`
   left: 0;
   right: 0;
   margin: 0 auto;
-  background-color: red;
 `;
 
 const rowVariants = {
@@ -147,6 +146,12 @@ function Home() {
   const onOverlayClick = () => {
     history.push("/");
   };
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch.params.movieId
+    );
+  console.log(clickedMovie);
   return (
     <Wrapper>
       {isLoading ? (
@@ -203,7 +208,13 @@ function Home() {
                 <BigMovie
                   layoutId={bigMovieMatch.params.movieId}
                   bigMovieTop={scrollY.get() + 85}
-                />
+                >
+                  {clickedMovie && (
+                    <>
+                      <h2>{clickedMovie.title}</h2>
+                    </>
+                  )}
+                </BigMovie>
               </>
             ) : null}
           </AnimatePresence>
