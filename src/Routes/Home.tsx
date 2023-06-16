@@ -140,6 +140,10 @@ const infoVariants = {
 
 const offset = 6;
 
+interface IForm {
+  keyword: string;
+}
+
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
