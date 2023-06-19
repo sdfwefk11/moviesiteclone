@@ -43,12 +43,12 @@ export interface IGetMoviesResult {
 
 export function getMovies() {
   return fetch(
-    `${BASE_PATH}movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=kr`
+    `${BASE_PATH}movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
   ).then((response) => response.json());
 }
 
-export function getMovieSearch() {
+export function getMovieSearch(keyword: string | null) {
   return fetch(
-    `${BASE_PATH}search/multi?api_key=${API_KEY}&query=fast%20x&include_adult=false&language=en-US&page=1`
+    `${BASE_PATH}search/multi?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR&page=1`
   ).then((response) => response.json());
 }

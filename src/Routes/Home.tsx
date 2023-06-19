@@ -140,10 +140,6 @@ const infoVariants = {
 
 const offset = 6;
 
-interface IForm {
-  keyword: string;
-}
-
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
@@ -151,6 +147,7 @@ function Home() {
     ["movies", "nowPlaying"],
     getMovies
   );
+  console.log(data);
   const [index, setIndex] = useState(0);
   const { scrollY } = useScroll();
   const increaseIndex = () => {
