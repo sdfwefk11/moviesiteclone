@@ -178,7 +178,7 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
-            {...register("keyword", { required: true, minLength: 2 })}
+            {...register("keyword", { required: true })}
             animate={inputAnimation}
             transition={{ type: "linear" }}
             initial={{ scaleX: 0 }}

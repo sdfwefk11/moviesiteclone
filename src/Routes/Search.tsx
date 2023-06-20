@@ -26,13 +26,20 @@ interface IMultiSearch {
 }
 
 function Search() {
+  const { data, isLoading } = useQuery<IMultiSearch>(
+    ["search", "movieSearch"],
+    getMovieSearch
+  );
+
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
-  getMovieSearch(keyword);
-  // const { data, isLoading } = useQuery<IMultiSearch>(
-  //   ["search", "movieSearch"],
-  //   getMovieSearch
-  // );
+  if (keyword) {
+    getMovieSearch(keyword);
+  }
+
+  console.log(keyword);
+  console.log(data);
+
   return null;
 }
 

@@ -47,8 +47,8 @@ export function getMovies() {
   ).then((response) => response.json());
 }
 
-export function getMovieSearch(keyword: string | null) {
+export function getMovieSearch(keyword: any) {
   return fetch(
-    `${BASE_PATH}search/multi?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR&page=1`
+    `${BASE_PATH}search/movie?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR&page=1`
   ).then((response) => response.json());
 }
