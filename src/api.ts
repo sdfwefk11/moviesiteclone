@@ -1,23 +1,9 @@
 const API_KEY = "1b86acec5851a012fe6a11323ab396f0";
 const BASE_PATH = "https://api.themoviedb.org/3/";
 
-interface IGenre_ids {
-  0: number;
-  1: number;
-  2: number;
-  3: number;
-  4: number;
-  5: number;
-  6: number;
-  7: number;
-  8: number;
-  9: number;
-  10: number;
-}
 interface IMovie {
   adult: boolean;
   backdrop_path: string;
-  genre_ids: IGenre_ids[] | undefined;
   id: number;
   original_language: string;
   original_title: string;
@@ -37,6 +23,28 @@ export interface IGetMoviesResult {
   };
   page: number;
   results: IMovie[];
+  total_pages: number;
+  total_results: number;
+}
+interface ISearchResult {
+  adult: boolean;
+  backdrop_path: string;
+  id: number;
+  media_type: string;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
+export interface IMultiSearch {
+  page: number;
+  results: ISearchResult[];
   total_pages: number;
   total_results: number;
 }

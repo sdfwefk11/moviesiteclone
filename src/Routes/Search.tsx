@@ -1,46 +1,43 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
-import { getMovieSearch } from "../api";
+import styled from "styled-components";
+import { getMovieSearch, IMultiSearch } from "../api";
 
-interface ISearchResult {
-  adult: boolean;
-  backdrop_path: string;
-  id: number;
-  media_type: string;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-}
-interface IMultiSearch {
-  page: number;
-  results: ISearchResult[];
-  total_pages: number;
-  total_results: number;
-}
+const Wrapper = styled.div`
+  background-color: black;
+  padding-bottom: 200px;
+`;
+const Loader = styled.div`
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Result = styled.div``;
+const Movies = styled.div``;
 
 function Search() {
-  const { data, isLoading } = useQuery<IMultiSearch>(
-    ["search", "movieSearch"],
-    getMovieSearch
-  );
-
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
-  if (keyword) {
-    getMovieSearch(keyword);
-  }
-
+  const { data, isLoading } = useQuery<IMultiSearch>(
+    ["search", "movieSearch"],
+    () => getMovieSearch(keyword)
+  );
   console.log(keyword);
   console.log(data);
-
-  return null;
+  return (
+    <Wrapper>
+      {isLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <Result>
+          {data?.results.map((item) => (
+            <Movies>{item.original_title}</Movies>
+          ))}
+        </Result>
+      )}
+    </Wrapper>
+  );
 }
 
 export default Search;
