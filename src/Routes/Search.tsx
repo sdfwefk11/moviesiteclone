@@ -15,6 +15,8 @@ const Loader = styled.div`
 `;
 const Result = styled.div``;
 const Movies = styled.div``;
+const Title = styled.div``;
+const Overview = styled.div``;
 
 function Search() {
   const location = useLocation();
@@ -32,7 +34,10 @@ function Search() {
       ) : (
         <Result>
           {data?.results.map((item) => (
-            <Movies>{item.original_title}</Movies>
+            <Movies>
+              <Title>{item.original_title}</Title>
+              <Overview>{item.overview}</Overview>
+            </Movies>
           ))}
         </Result>
       )}
