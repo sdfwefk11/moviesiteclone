@@ -107,8 +107,8 @@ const BigTitle = styled.h2`
 `;
 const BigOverview = styled.p`
   position: relative;
-  top: -50px;
-  padding: 30px;
+  top: -45px;
+  padding: 10px;
   color: ${(props) => props.theme.white.lighter};
 `;
 
