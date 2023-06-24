@@ -40,7 +40,7 @@ const Title = styled.h2`
   justify-content: center;
   align-items: center;
   position: relative;
-  border-radius: 15px;
+  border-radius: 5px;
   top: -80px;
   padding: 10px;
   color: ${(props) => props.theme.white.lighter};
@@ -63,12 +63,14 @@ function Search() {
         <Loader>Loading...</Loader>
       ) : (
         <Result>
-          {data?.results.map((item) => (
-            <>
-              <Movies bgImg={makeImagePath(item.backdrop_path)} />
-              <Title>{item.original_title}</Title>
-            </>
-          ))}
+          {data?.results.map((item) =>
+            item.backdrop_path ? (
+              <>
+                <Movies bgImg={makeImagePath(item.backdrop_path)} />
+                <Title>{item.original_title}</Title>
+              </>
+            ) : null
+          )}
         </Result>
       )}
     </Wrapper>

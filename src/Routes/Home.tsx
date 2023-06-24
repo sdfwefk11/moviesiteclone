@@ -50,7 +50,7 @@ const Box = styled(motion.div)<{ bgImg: string }>`
   background-image: url(${(props) => props.bgImg});
   background-size: cover;
   background-position: center center;
-  height: 200px;
+  height: 120px;
   font-size: 40px;
   cursor: pointer;
   &:first-child {
@@ -128,7 +128,7 @@ const boxVariants = {
   hover: {
     scale: 1.3,
     transition: { delay: 0.3, duration: 0.3, type: "tween" },
-    y: -80,
+    y: -50,
   },
 };
 const infoVariants = {
@@ -159,6 +159,15 @@ function Home() {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
+  };
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
@@ -181,14 +190,43 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            onClick={increaseIndex}
-            bgImg={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgImg={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
+            <div
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                width: "100%",
+                justifyContent: "space-between",
+                display: "flex",
+                top: "50px",
+                pointerEvents: "none",
+              }}
+            >
+              <div
+                onClick={increaseIndex}
+                style={{
+                  backgroundColor: "red",
+                  cursor: "pointer",
+                  pointerEvents: "initial",
+                }}
+              >
+                123
+              </div>
+              <div
+                onClick={decreaseIndex}
+                style={{
+                  backgroundColor: "blue",
+                  pointerEvents: "initial",
+                  cursor: "pointer",
+                }}
+              >
+                123
+              </div>
+            </div>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={index}
