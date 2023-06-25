@@ -112,6 +112,15 @@ const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
 `;
 
+const decRowVariants = {
+  hidden: {
+    x: -window.outerWidth + 5,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: { x: window.outerWidth - 5 },
+};
 const rowVariants = {
   hidden: {
     x: window.outerWidth + 5,
@@ -147,9 +156,10 @@ function Home() {
     ["movies", "nowPlaying"],
     getMovies
   );
-  console.log(data);
   const [index, setIndex] = useState(0);
   const { scrollY } = useScroll();
+  const [direction, setDirection] = useState("next");
+
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -158,6 +168,7 @@ function Home() {
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
+    setDirection("next");
   };
   const decreaseIndex = () => {
     if (data) {
@@ -165,9 +176,11 @@ function Home() {
       toggleLeaving();
       const totalMovies = data.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIndex((prev) => (prev === maxIndex ? 0 : prev - 1));
     }
+    setDirection("prev");
   };
+
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
@@ -183,7 +196,6 @@ function Home() {
     data?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
-  console.log(clickedMovie);
   return (
     <Wrapper>
       {isLoading ? (
@@ -207,7 +219,7 @@ function Home() {
               }}
             >
               <div
-                onClick={increaseIndex}
+                onClick={decreaseIndex}
                 style={{
                   backgroundColor: "red",
                   cursor: "pointer",
@@ -217,7 +229,7 @@ function Home() {
                 123
               </div>
               <div
-                onClick={decreaseIndex}
+                onClick={increaseIndex}
                 style={{
                   backgroundColor: "blue",
                   pointerEvents: "initial",
@@ -230,7 +242,7 @@ function Home() {
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={index}
-                variants={rowVariants}
+                variants={direction === "next" ? rowVariants : decRowVariants}
                 transition={{ type: "tween", duration: 0.5 }}
                 initial="hidden"
                 animate="visible"
