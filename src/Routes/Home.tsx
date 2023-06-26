@@ -111,6 +111,25 @@ const BigOverview = styled.p`
   padding: 10px;
   color: ${(props) => props.theme.white.lighter};
 `;
+const SliderBtn = styled.div`
+  position: absolute;
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+  top: 50px;
+  pointer-events: none;
+  z-index: 1;
+`;
+const NextBtn = styled.div`
+  background-color: red;
+  cursor: pointer;
+  pointer-events: initial;
+`;
+const PrevBtn = styled.div`
+  background-color: blue;
+  pointer-events: initial;
+  cursor: pointer;
+`;
 
 const decRowVariants = {
   hidden: {
@@ -176,7 +195,7 @@ function Home() {
       toggleLeaving();
       const totalMovies = data.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev - 1));
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
     setDirection("prev");
   };
@@ -207,38 +226,10 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <div
-              style={{
-                position: "absolute",
-                zIndex: 1,
-                width: "100%",
-                justifyContent: "space-between",
-                display: "flex",
-                top: "50px",
-                pointerEvents: "none",
-              }}
-            >
-              <div
-                onClick={decreaseIndex}
-                style={{
-                  backgroundColor: "red",
-                  cursor: "pointer",
-                  pointerEvents: "initial",
-                }}
-              >
-                123
-              </div>
-              <div
-                onClick={increaseIndex}
-                style={{
-                  backgroundColor: "blue",
-                  pointerEvents: "initial",
-                  cursor: "pointer",
-                }}
-              >
-                123
-              </div>
-            </div>
+            <SliderBtn>
+              <NextBtn onClick={decreaseIndex}>123</NextBtn>
+              <PrevBtn onClick={increaseIndex}>123</PrevBtn>
+            </SliderBtn>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={index}
