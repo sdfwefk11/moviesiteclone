@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
+import { useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { getMovieSearch, IMultiSearch } from "../api";
 import { makeImagePath } from "../utils";
@@ -55,8 +55,8 @@ function Search() {
     ["search", "movieSearch"],
     () => getMovieSearch(keyword)
   );
-  console.log(keyword);
-  console.log(data);
+  const bigMovieMatch = useRouteMatch(`/search?keyword=${keyword}:movieId`);
+  console.log(bigMovieMatch);
   return (
     <Wrapper>
       {isLoading ? (
