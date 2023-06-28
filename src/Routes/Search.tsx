@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { getMovieSearch, IMultiSearch } from "../api";
 import { makeImagePath } from "../utils";
@@ -49,14 +50,18 @@ const Title = styled.h2`
 `;
 
 function Search() {
+  const history = useHistory();
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
+
   const { data, isLoading } = useQuery<IMultiSearch>(
     ["search", "movieSearch"],
     () => getMovieSearch(keyword)
   );
-  const bigMovieMatch = useRouteMatch(`/search?keyword=${keyword}:movieId`);
-  console.log(bigMovieMatch);
+  const onMovieClicked = (movieId: number) => {
+    history.push(`/search/moviesearch/${movieId}`);
+  };
+  const bigMovieMatch = useRouteMatch("/search/:movieId");
   return (
     <Wrapper>
       {isLoading ? (
@@ -66,11 +71,30 @@ function Search() {
           {data?.results.map((item) =>
             item.backdrop_path ? (
               <>
-                <Movies bgImg={makeImagePath(item.backdrop_path)} />
+                <Movies
+                  bgImg={makeImagePath(item.backdrop_path)}
+                  onClick={() => onMovieClicked(item.id)}
+                />
                 <Title>{item.original_title}</Title>
               </>
             ) : null
           )}
+          <AnimatePresence>
+            {bigMovieMatch ? (
+              <motion.div
+                style={{
+                  position: "absolute",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "ivory",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                }}
+              ></motion.div>
+            ) : null}
+          </AnimatePresence>
         </Result>
       )}
     </Wrapper>
