@@ -48,6 +48,14 @@ const Title = styled.h2`
   background-color: ${(props) => props.theme.black.lighter};
   font-size: 50px;
 `;
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
 
 function Search() {
   const history = useHistory();
@@ -58,10 +66,10 @@ function Search() {
     ["search", "movieSearch"],
     () => getMovieSearch(keyword)
   );
-  const onMovieClicked = (movieId: number) => {
-    history.push(`/search/moviesearch/${movieId}`);
+  const onMovieClicked = (movieTitle: string, movieId: number) => {
+    history.push(`/${movieTitle}/${movieId}`);
   };
-  const bigMovieMatch = useRouteMatch("/search/:movieId");
+  const bigMovieMatch = useRouteMatch("/search?keyword=/:movieId");
   return (
     <Wrapper>
       {isLoading ? (
@@ -73,7 +81,7 @@ function Search() {
               <>
                 <Movies
                   bgImg={makeImagePath(item.backdrop_path)}
-                  onClick={() => onMovieClicked(item.id)}
+                  onClick={() => onMovieClicked(item.title, item.id)}
                 />
                 <Title>{item.original_title}</Title>
               </>
@@ -81,18 +89,21 @@ function Search() {
           )}
           <AnimatePresence>
             {bigMovieMatch ? (
-              <motion.div
-                style={{
-                  position: "absolute",
-                  width: "40vw",
-                  height: "80vh",
-                  backgroundColor: "ivory",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  margin: "0 auto",
-                }}
-              ></motion.div>
+              <>
+                <Overlay />
+                <motion.div
+                  style={{
+                    position: "absolute",
+                    width: "40vw",
+                    height: "80vh",
+                    backgroundColor: "ivory",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    margin: "0 auto",
+                  }}
+                ></motion.div>
+              </>
             ) : null}
           </AnimatePresence>
         </Result>
