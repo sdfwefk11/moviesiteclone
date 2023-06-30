@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { getMovieSearch, IMultiSearch } from "../api";
@@ -61,13 +61,12 @@ function Search() {
   const history = useHistory();
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
-
   const { data, isLoading } = useQuery<IMultiSearch>(
     ["search", "movieSearch"],
     () => getMovieSearch(keyword)
   );
   const onMovieClicked = (movieTitle: string, movieId: number) => {
-    history.push(`/${movieTitle}/${movieId}`);
+    // history.push(`/search?keyword=/${movieId}`);
   };
   const bigMovieMatch = useRouteMatch("/search?keyword=/:movieId");
   return (

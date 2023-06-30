@@ -4,7 +4,7 @@ import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const Nav = styled(motion.nav)`
+const Nav = styled(motion.nav)<{ navTop: number }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,6 +15,7 @@ const Nav = styled(motion.nav)`
   padding: 20px 60px;
   color: white;
   z-index: 1;
+  opacity: ${(props) => (props.navTop > 200 ? 0 : 1)};
 `;
 const Col = styled.div`
   display: flex;
@@ -115,6 +116,15 @@ function Header() {
         navAnimation.start("up");
       }
     });
+    scrollY.onChange(() => {
+      if (scrollY.get() > 400) {
+        navAnimation.start({
+          opacity: 0,
+        });
+      } else {
+        navAnimation.start({ opacity: 1 });
+      }
+    });
   }, [scrollY]);
   const toggleSearch = () => {
     if (searchOpen) {
@@ -133,8 +143,14 @@ function Header() {
   const onValid = (data: IForm) => {
     history.push(`/search?keyword=${data.keyword}`);
   };
+
   return (
-    <Nav variants={navVariants} animate={navAnimation} initial="up">
+    <Nav
+      variants={navVariants}
+      animate={navAnimation}
+      initial="up"
+      navTop={scrollY.get()}
+    >
       <Col>
         <Logo
           variants={logoVariants}
