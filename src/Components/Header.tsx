@@ -108,20 +108,35 @@ function Header() {
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
+  const [currentScrollY, setCurrentScrollY] = useState(0);
   useEffect(() => {
+    // scrollY.onChange(() => {
+    //   if (scrollY.get() > 80) {
+    //     navAnimation.start("scroll");
+    //   } else {
+    //     navAnimation.start("up");
+    //   }
+    // });
+    // scrollY.onChange(() => {
+    //   if (scrollY.get() > 400) {
+    //     navAnimation.start({
+    //       opacity: 0,
+    //     });
+    //   } else {
+    //     navAnimation.start({ opacity: 1 });
+    //   }
+    // });
     scrollY.onChange(() => {
-      if (scrollY.get() > 80) {
-        navAnimation.start("scroll");
-      } else {
-        navAnimation.start("up");
-      }
-    });
-    scrollY.onChange(() => {
-      if (scrollY.get() > 400) {
+      setCurrentScrollY(scrollY.get());
+      if (currentScrollY < scrollY.get()) {
         navAnimation.start({
           opacity: 0,
         });
-      } else {
+      }
+    });
+    scrollY.onChange(() => {
+      setCurrentScrollY(scrollY.get());
+      if (currentScrollY > scrollY.get()) {
         navAnimation.start({ opacity: 1 });
       }
     });
