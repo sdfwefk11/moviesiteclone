@@ -215,6 +215,7 @@ function Home() {
     data?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
+  console.log(clickedMovie);
   return (
     <Wrapper>
       {isLoading ? (

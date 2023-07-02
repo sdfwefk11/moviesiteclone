@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { getMovieSearch, IMultiSearch } from "../api";
 import { makeImagePath } from "../utils";
@@ -48,27 +47,16 @@ const Title = styled.h2`
   background-color: ${(props) => props.theme.black.lighter};
   font-size: 50px;
 `;
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
 
 function Search() {
-  const history = useHistory();
   const location = useLocation();
+  console.log(location.search);
   const keyword = new URLSearchParams(location.search).get("keyword");
+  console.log(keyword);
   const { data, isLoading } = useQuery<IMultiSearch>(
     ["search", "movieSearch"],
     () => getMovieSearch(keyword)
   );
-  const onMovieClicked = (movieTitle: string, movieId: number) => {
-    // history.push(`/search?keyword=/${movieId}`);
-  };
-  const bigMovieMatch = useRouteMatch("/search?keyword=/:movieId");
   return (
     <Wrapper>
       {isLoading ? (
@@ -78,33 +66,11 @@ function Search() {
           {data?.results.map((item) =>
             item.backdrop_path ? (
               <>
-                <Movies
-                  bgImg={makeImagePath(item.backdrop_path)}
-                  onClick={() => onMovieClicked(item.title, item.id)}
-                />
+                <Movies bgImg={makeImagePath(item.backdrop_path)} />
                 <Title>{item.original_title}</Title>
               </>
             ) : null
           )}
-          <AnimatePresence>
-            {bigMovieMatch ? (
-              <>
-                <Overlay />
-                <motion.div
-                  style={{
-                    position: "absolute",
-                    width: "40vw",
-                    height: "80vh",
-                    backgroundColor: "ivory",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    margin: "0 auto",
-                  }}
-                ></motion.div>
-              </>
-            ) : null}
-          </AnimatePresence>
         </Result>
       )}
     </Wrapper>

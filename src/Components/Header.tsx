@@ -132,14 +132,16 @@ function Header() {
         navAnimation.start({
           opacity: 0,
         });
-      }
-    });
-    scrollY.onChange(() => {
-      setCurrentScrollY(scrollY.get());
-      if (currentScrollY > scrollY.get()) {
+      } else if (scrollY.get() < 1000) {
         navAnimation.start({ opacity: 1 });
       }
     });
+    // scrollY.onChange(() => {
+    //   setCurrentScrollY(scrollY.get());
+    //   if (currentScrollY > scrollY.get()) {
+    //     navAnimation.start({ opacity: 1 });
+    //   }
+    // });
   }, [scrollY]);
   const toggleSearch = () => {
     if (searchOpen) {

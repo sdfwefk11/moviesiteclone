@@ -11,7 +11,7 @@ function App() {
         <Route path="/tv">
           <Tv />
         </Route>
-        <Route path={["/search", "/search?keyword=/:movieId"]}>
+        <Route path={["/search", "/search/:movieId"]}>
           <Search />
         </Route>
         <Route path={["/", "/movies/:movieId"]}>
