@@ -60,3 +60,8 @@ export function getMovieSearch(keyword: any) {
     `${BASE_PATH}search/movie?api_key=${API_KEY}&query=${keyword}&include_adult=false&language=ko-KR&page=1`
   ).then((response) => response.json());
 }
+export function getVideosSearch() {
+  return fetch(
+    `${BASE_PATH}movie/667538/videos?api_key=${API_KEY}&language=ko-KR'`
+  ).then((response) => response.json());
+}
