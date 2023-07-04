@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMovies, IGetMoviesResult } from "../api";
+import {
+  getMovies,
+  getPopularMovies,
+  IGetMoviesResult,
+  IPopularMovie,
+} from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
@@ -171,29 +176,30 @@ const offset = 6;
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
-    ["movies", "nowPlaying"],
-    getMovies
-  );
+  const { data: nowPlaying, isLoading: nowPlayingIsLoading } =
+    useQuery<IGetMoviesResult>(["movies", "nowPlaying"], getMovies);
+  const { data: popular, isLoading: popularIsLoading } =
+    useQuery<IPopularMovie>(["popular", "popularMovies"], getPopularMovies);
+  console.log(popular);
   const [index, setIndex] = useState(0);
   const { scrollY } = useScroll();
   const [direction, setDirection] = useState("next");
 
   const increaseIndex = () => {
-    if (data) {
+    if (nowPlaying) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = data.results.length - 1;
+      const totalMovies = nowPlaying.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
     setDirection("next");
   };
   const decreaseIndex = () => {
-    if (data) {
+    if (nowPlaying) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = data.results.length - 1;
+      const totalMovies = nowPlaying.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
@@ -212,19 +218,21 @@ function Home() {
   };
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
-    data?.results.find(
+    nowPlaying?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
   console.log(clickedMovie);
   return (
     <Wrapper>
-      {isLoading ? (
+      {nowPlayingIsLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgImg={makeImagePath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+          <Banner
+            bgImg={makeImagePath(nowPlaying?.results[0].backdrop_path || "")}
+          >
+            <Title>{nowPlaying?.results[0].title}</Title>
+            <Overview>{nowPlaying?.results[0].overview}</Overview>
           </Banner>
           <Slider>
             <SliderBtn>
@@ -240,7 +248,7 @@ function Home() {
                 animate="visible"
                 exit="exit"
               >
-                {data?.results
+                {nowPlaying?.results
                   .slice(1)
                   .slice(offset * index, offset * index + offset)
                   .map((item) => (
@@ -262,6 +270,7 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+
           <AnimatePresence>
             {bigMovieMatch ? (
               <>
@@ -291,6 +300,20 @@ function Home() {
               </>
             ) : null}
           </AnimatePresence>
+          <Slider>
+            <Row
+              transition={{ type: "tween", duration: 0.5 }}
+              variants={rowVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              style={{ marginTop: "200px" }}
+            >
+              {popular?.results.map((item) => (
+                <Box bgImg={makeImagePath(item.backdrop_path, "w500")}></Box>
+              ))}
+            </Row>
+          </Slider>
         </>
       )}
     </Wrapper>
