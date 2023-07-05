@@ -182,8 +182,13 @@ function Home() {
     useQuery<IPopularMovie>(["popular", "popularMovies"], getPopularMovies);
   console.log(popular);
   const [index, setIndex] = useState(0);
+  const [popularIndex, setPopularIndex] = useState(0);
   const { scrollY } = useScroll();
   const [direction, setDirection] = useState("next");
+
+  const popularIncrease = () => {
+    setPopularIndex((prev) => prev + 1);
+  };
 
   const increaseIndex = () => {
     if (nowPlaying) {
@@ -270,7 +275,24 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
-
+          <Slider>
+            <AnimatePresence>
+              <Row
+                onClick={popularIncrease}
+                key={popularIndex}
+                transition={{ type: "tween", duration: 0.5 }}
+                variants={rowVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                style={{ marginTop: "200px" }}
+              >
+                {popular?.results.map((item) => (
+                  <Box bgImg={makeImagePath(item.backdrop_path, "w500")}></Box>
+                ))}
+              </Row>
+            </AnimatePresence>
+          </Slider>
           <AnimatePresence>
             {bigMovieMatch ? (
               <>
@@ -300,20 +322,6 @@ function Home() {
               </>
             ) : null}
           </AnimatePresence>
-          <Slider>
-            <Row
-              transition={{ type: "tween", duration: 0.5 }}
-              variants={rowVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              style={{ marginTop: "200px" }}
-            >
-              {popular?.results.map((item) => (
-                <Box bgImg={makeImagePath(item.backdrop_path, "w500")}></Box>
-              ))}
-            </Row>
-          </Slider>
         </>
       )}
     </Wrapper>
