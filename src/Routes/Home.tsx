@@ -185,11 +185,13 @@ function Home() {
   const [popularIndex, setPopularIndex] = useState(0);
   const { scrollY } = useScroll();
   const [direction, setDirection] = useState("next");
+  const [leaving, setLeaving] = useState(false);
 
   const popularIncrease = () => {
+    if (leaving) return;
+    toggleLeaving();
     setPopularIndex((prev) => prev + 1);
   };
-
   const increaseIndex = () => {
     if (nowPlaying) {
       if (leaving) return;
@@ -211,7 +213,6 @@ function Home() {
     setDirection("prev");
   };
 
-  const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
@@ -276,7 +277,7 @@ function Home() {
             </AnimatePresence>
           </Slider>
           <Slider>
-            <AnimatePresence>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 onClick={popularIncrease}
                 key={popularIndex}
@@ -285,11 +286,18 @@ function Home() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                style={{ marginTop: "200px" }}
+                style={{
+                  marginTop: "200px",
+                }}
               >
-                {popular?.results.map((item) => (
-                  <Box bgImg={makeImagePath(item.backdrop_path, "w500")}></Box>
-                ))}
+                {popular?.results
+                  .slice(offset * index, offset * index + offset)
+                  .map((item) => (
+                    <Box
+                      key={item.id}
+                      bgImg={makeImagePath(item.backdrop_path, "w500")}
+                    ></Box>
+                  ))}
               </Row>
             </AnimatePresence>
           </Slider>
