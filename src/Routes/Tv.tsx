@@ -6,7 +6,7 @@ function Tv() {
     ["videos", "searchVideos"],
     getVideosSearch
   );
-  console.log(data);
+  // console.log(data);
   return null;
 }
 

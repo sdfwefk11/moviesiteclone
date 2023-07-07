@@ -178,20 +178,38 @@ function Home() {
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { data: nowPlaying, isLoading: nowPlayingIsLoading } =
     useQuery<IGetMoviesResult>(["movies", "nowPlaying"], getMovies);
-  const { data: popular, isLoading: popularIsLoading } =
-    useQuery<IPopularMovie>(["popular", "popularMovies"], getPopularMovies);
-  console.log(popular);
+  const { data: popularMovie } = useQuery<IPopularMovie>(
+    ["popular", "popularMovies"],
+    getPopularMovies
+  );
   const [index, setIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
   const { scrollY } = useScroll();
   const [direction, setDirection] = useState("next");
+  const [popularDirec, setPopularDirec] = useState("next");
   const [leaving, setLeaving] = useState(false);
 
-  const popularIncrease = () => {
-    if (leaving) return;
-    toggleLeaving();
-    setPopularIndex((prev) => prev + 1);
+  const increasePopular = () => {
+    if (popularMovie) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = popularMovie?.results.length;
+      const maxMovies = Math.floor(totalMovies / offset) - 1;
+      setPopularIndex((prev) => (prev === maxMovies ? 0 : prev + 1));
+    }
+    setPopularDirec("next");
   };
+  const decreasePopular = () => {
+    if (popularMovie) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = popularMovie?.results.length;
+      const maxMovies = Math.floor(totalMovies / offset) - 1;
+      setPopularIndex((prev) => (prev === 0 ? maxMovies : prev - 1));
+    }
+    setPopularDirec("prev");
+  };
+  console.log(popularIndex);
   const increaseIndex = () => {
     if (nowPlaying) {
       if (leaving) return;
@@ -227,7 +245,6 @@ function Home() {
     nowPlaying?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
-  console.log(clickedMovie);
   return (
     <Wrapper>
       {nowPlayingIsLoading ? (
@@ -242,8 +259,8 @@ function Home() {
           </Banner>
           <Slider>
             <SliderBtn>
-              <NextBtn onClick={decreaseIndex}>123</NextBtn>
-              <PrevBtn onClick={increaseIndex}>123</PrevBtn>
+              <PrevBtn onClick={decreaseIndex}>Prev</PrevBtn>
+              <NextBtn onClick={increaseIndex}>Next</NextBtn>
             </SliderBtn>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -277,12 +294,17 @@ function Home() {
             </AnimatePresence>
           </Slider>
           <Slider>
+            <SliderBtn style={{ marginTop: "200px" }}>
+              <PrevBtn onClick={decreasePopular}>Prev</PrevBtn>
+              <NextBtn onClick={increasePopular}>Next</NextBtn>
+            </SliderBtn>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
-                onClick={popularIncrease}
                 key={popularIndex}
                 transition={{ type: "tween", duration: 0.5 }}
-                variants={rowVariants}
+                variants={
+                  popularDirec === "next" ? rowVariants : decRowVariants
+                }
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -290,8 +312,8 @@ function Home() {
                   marginTop: "200px",
                 }}
               >
-                {popular?.results
-                  .slice(offset * index, offset * index + offset)
+                {popularMovie?.results
+                  .slice(offset * popularIndex, offset * popularIndex + offset)
                   .map((item) => (
                     <Box
                       key={item.id}
