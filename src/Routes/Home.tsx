@@ -316,9 +316,17 @@ function Home() {
                   .slice(offset * popularIndex, offset * popularIndex + offset)
                   .map((item) => (
                     <Box
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                       key={item.id}
                       bgImg={makeImagePath(item.backdrop_path, "w500")}
-                    ></Box>
+                    >
+                      <Info variants={infoVariants}>
+                        <h4>{item.title}</h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
