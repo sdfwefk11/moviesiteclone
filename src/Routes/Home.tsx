@@ -245,6 +245,11 @@ function Home() {
     nowPlaying?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
+  const clickPopular =
+    bigMovieMatch?.params.movieId &&
+    popularMovie?.results.find(
+      (movie) => movie.id + "" === bigMovieMatch.params.movieId
+    );
   return (
     <Wrapper>
       {nowPlayingIsLoading ? (
@@ -316,6 +321,8 @@ function Home() {
                   .slice(offset * popularIndex, offset * popularIndex + offset)
                   .map((item) => (
                     <Box
+                      layoutId={item.id + ""}
+                      onClick={() => onBoxClicked(item.id)}
                       variants={boxVariants}
                       initial="normal"
                       whileHover="hover"
@@ -360,6 +367,36 @@ function Home() {
               </>
             ) : null}
           </AnimatePresence>
+          {/* <AnimatePresence>
+            {bigMovieMatch ? (
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <BigMovie
+                    layoutId={bigMovieMatch.params.movieId}
+                    bigMovieTop={scrollY.get() + 85}
+                  >
+                    {clickPopular && (
+                      <>
+                        <BigCover
+                          style={{
+                            backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                              clickPopular.backdrop_path
+                            )})`,
+                          }}
+                        />
+                        <BigTitle>{clickPopular.title}</BigTitle>
+                        <BigOverview>{clickPopular.overview}</BigOverview>
+                      </>
+                    )}
+                  </BigMovie>
+                </Overlay>
+              </>
+            ) : null}
+          </AnimatePresence> */}
         </>
       )}
     </Wrapper>
