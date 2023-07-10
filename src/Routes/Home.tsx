@@ -123,7 +123,6 @@ const SliderBtn = styled.div`
   display: flex;
   top: 50px;
   pointer-events: none;
-  z-index: 1;
 `;
 const NextBtn = styled.div`
   background-color: red;
@@ -136,7 +135,7 @@ const PrevBtn = styled.div`
   cursor: pointer;
 `;
 
-const decRowVariants = {
+const nowPlayingDecRowVariants = {
   hidden: {
     x: -window.outerWidth + 5,
   },
@@ -145,7 +144,7 @@ const decRowVariants = {
   },
   exit: { x: window.outerWidth - 5 },
 };
-const rowVariants = {
+const nowPlayingRowVariants = {
   hidden: {
     x: window.outerWidth + 5,
   },
@@ -154,7 +153,35 @@ const rowVariants = {
   },
   exit: { x: -window.outerWidth - 5 },
 };
-const boxVariants = {
+const popularDecRowVariants = {
+  hidden: {
+    x: -window.outerWidth + 5,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: { x: window.outerWidth - 5 },
+};
+const popularRowVariants = {
+  hidden: {
+    x: window.outerWidth + 5,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: { x: -window.outerWidth - 5 },
+};
+const nowPlayingBoxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    transition: { delay: 0.3, duration: 0.3, type: "tween" },
+    y: -50,
+  },
+};
+const popularBoxVariants = {
   normal: {
     scale: 1,
   },
@@ -175,7 +202,12 @@ const offset = 6;
 
 function Home() {
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>(
+    "/movies/nowplaying/:movieId"
+  );
+  const popularMatch = useRouteMatch<{ movieId: string }>(
+    "/movies/popular/:movieId"
+  );
   const { data: nowPlaying, isLoading: nowPlayingIsLoading } =
     useQuery<IGetMoviesResult>(["movies", "nowPlaying"], getMovies);
   const { data: popularMovie } = useQuery<IPopularMovie>(
@@ -189,6 +221,10 @@ function Home() {
   const [popularDirec, setPopularDirec] = useState("next");
   const [leaving, setLeaving] = useState(false);
 
+  console.log(nowPlaying);
+  const toggleLeaving = () => {
+    setLeaving((prev) => !prev);
+  };
   const increasePopular = () => {
     if (popularMovie) {
       if (leaving) return;
@@ -230,12 +266,11 @@ function Home() {
     }
     setDirection("prev");
   };
-
-  const toggleLeaving = () => {
-    setLeaving((prev) => !prev);
+  const nowPlayingClicked = (movieId: number) => {
+    history.push(`/movies/nowplaying/${movieId}`);
   };
-  const onBoxClicked = (movieId: number) => {
-    history.push(`/movies/${movieId}`);
+  const popularClicked = (movieId: number) => {
+    history.push(`/movies/popular/${movieId}`);
   };
   const onOverlayClick = () => {
     history.push("/");
@@ -246,9 +281,9 @@ function Home() {
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
   const clickPopular =
-    bigMovieMatch?.params.movieId &&
+    popularMatch?.params.movieId &&
     popularMovie?.results.find(
-      (movie) => movie.id + "" === bigMovieMatch.params.movieId
+      (movie) => movie.id + "" === popularMatch.params.movieId
     );
   return (
     <Wrapper>
@@ -263,14 +298,14 @@ function Home() {
             <Overview>{nowPlaying?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <SliderBtn>
-              <PrevBtn onClick={decreaseIndex}>Prev</PrevBtn>
-              <NextBtn onClick={increaseIndex}>Next</NextBtn>
-            </SliderBtn>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={index}
-                variants={direction === "next" ? rowVariants : decRowVariants}
+                variants={
+                  direction === "next"
+                    ? nowPlayingRowVariants
+                    : nowPlayingDecRowVariants
+                }
                 transition={{ type: "tween", duration: 0.5 }}
                 initial="hidden"
                 animate="visible"
@@ -281,9 +316,8 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((item) => (
                     <Box
-                      layoutId={item.id + ""}
-                      onClick={() => onBoxClicked(item.id)}
-                      variants={boxVariants}
+                      onClick={() => nowPlayingClicked(item.id)}
+                      variants={nowPlayingBoxVariants}
                       key={item.id}
                       whileHover="hover"
                       initial="normal"
@@ -297,18 +331,20 @@ function Home() {
                   ))}
               </Row>
             </AnimatePresence>
+            <SliderBtn>
+              <PrevBtn onClick={decreaseIndex}>Prev</PrevBtn>
+              <NextBtn onClick={increaseIndex}>Next</NextBtn>
+            </SliderBtn>
           </Slider>
           <Slider>
-            <SliderBtn style={{ marginTop: "200px" }}>
-              <PrevBtn onClick={decreasePopular}>Prev</PrevBtn>
-              <NextBtn onClick={increasePopular}>Next</NextBtn>
-            </SliderBtn>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 key={popularIndex}
                 transition={{ type: "tween", duration: 0.5 }}
                 variants={
-                  popularDirec === "next" ? rowVariants : decRowVariants
+                  popularDirec === "next"
+                    ? popularRowVariants
+                    : popularDecRowVariants
                 }
                 initial="hidden"
                 animate="visible"
@@ -321,9 +357,8 @@ function Home() {
                   .slice(offset * popularIndex, offset * popularIndex + offset)
                   .map((item) => (
                     <Box
-                      layoutId={item.id + ""}
-                      onClick={() => onBoxClicked(item.id)}
-                      variants={boxVariants}
+                      onClick={() => popularClicked(item.id)}
+                      variants={popularBoxVariants}
                       initial="normal"
                       whileHover="hover"
                       transition={{ type: "tween" }}
@@ -337,6 +372,10 @@ function Home() {
                   ))}
               </Row>
             </AnimatePresence>
+            <SliderBtn style={{ marginTop: "200px" }}>
+              <PrevBtn onClick={decreasePopular}>Prev</PrevBtn>
+              <NextBtn onClick={increasePopular}>Next</NextBtn>
+            </SliderBtn>
           </Slider>
           <AnimatePresence>
             {bigMovieMatch ? (
@@ -367,8 +406,8 @@ function Home() {
               </>
             ) : null}
           </AnimatePresence>
-          {/* <AnimatePresence>
-            {bigMovieMatch ? (
+          <AnimatePresence>
+            {popularMatch ? (
               <>
                 <Overlay
                   onClick={onOverlayClick}
@@ -376,8 +415,8 @@ function Home() {
                   exit={{ opacity: 0 }}
                 >
                   <BigMovie
-                    layoutId={bigMovieMatch.params.movieId}
-                    bigMovieTop={scrollY.get() + 85}
+                    layoutId={popularMatch.params.movieId}
+                    bigMovieTop={scrollY.get() - 138}
                   >
                     {clickPopular && (
                       <>
@@ -396,7 +435,7 @@ function Home() {
                 </Overlay>
               </>
             ) : null}
-          </AnimatePresence> */}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>

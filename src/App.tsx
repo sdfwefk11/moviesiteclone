@@ -14,7 +14,13 @@ function App() {
         <Route path={["/search", "/search/:movieId"]}>
           <Search />
         </Route>
-        <Route path={["/", "/movies/:movieId"]}>
+        <Route
+          path={[
+            "/",
+            "/movies/nowplaying/:movieId",
+            "/movies/popular/:movieId",
+          ]}
+        >
           <Home />
         </Route>
       </Switch>
