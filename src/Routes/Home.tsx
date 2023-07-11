@@ -97,6 +97,18 @@ const BigMovie = styled(motion.div)<{ bigMovieTop: number }>`
   overflow: hidden;
   background-color: ${(props) => props.theme.black.lighter};
 `;
+const BigMoviePopular = styled(motion.div)<{ bigMovieTop: number }>`
+  position: absolute;
+  width: 40vw;
+  height: 80vh;
+  top: ${(props) => props.bigMovieTop}px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: ${(props) => props.theme.black.lighter};
+`;
 const BigCover = styled.div`
   width: 100%;
   height: 300px;
@@ -414,7 +426,7 @@ function Home() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <BigMovie
+                  <BigMoviePopular
                     layoutId={popularMatch.params.movieId}
                     bigMovieTop={scrollY.get() - 138}
                   >
@@ -431,7 +443,7 @@ function Home() {
                         <BigOverview>{clickPopular.overview}</BigOverview>
                       </>
                     )}
-                  </BigMovie>
+                  </BigMoviePopular>
                 </Overlay>
               </>
             ) : null}
