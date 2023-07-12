@@ -97,18 +97,6 @@ const BigMovie = styled(motion.div)<{ bigMovieTop: number }>`
   overflow: hidden;
   background-color: ${(props) => props.theme.black.lighter};
 `;
-const BigMoviePopular = styled(motion.div)<{ bigMovieTop: number }>`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  top: ${(props) => props.bigMovieTop}px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 5px;
-  overflow: hidden;
-  background-color: ${(props) => props.theme.black.lighter};
-`;
 const BigCover = styled.div`
   width: 100%;
   height: 300px;
@@ -389,69 +377,63 @@ function Home() {
               <NextBtn onClick={increasePopular}>Next</NextBtn>
             </SliderBtn>
           </Slider>
-          <AnimatePresence>
-            {bigMovieMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClick}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                />
-                <BigMovie
-                  layoutId={bigMovieMatch.params.movieId}
-                  bigMovieTop={scrollY.get() + 85}
-                >
-                  {clickedMovie && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
-                            clickedMovie.backdrop_path
-                          )})`,
-                        }}
-                      />
-                      <BigTitle>{clickedMovie.title}</BigTitle>
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
-                    </>
-                  )}
-                </BigMovie>
-              </>
-            ) : null}
-          </AnimatePresence>
-          <AnimatePresence>
-            {popularMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClick}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <BigMoviePopular
-                    layoutId={popularMatch.params.movieId}
-                    bigMovieTop={scrollY.get() - 138}
-                  >
-                    {clickPopular && (
-                      <>
-                        <BigCover
-                          style={{
-                            backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
-                              clickPopular.backdrop_path
-                            )})`,
-                          }}
-                        />
-                        <BigTitle>{clickPopular.title}</BigTitle>
-                        <BigOverview>{clickPopular.overview}</BigOverview>
-                      </>
-                    )}
-                  </BigMoviePopular>
-                </Overlay>
-              </>
-            ) : null}
-          </AnimatePresence>
+          {bigMovieMatch ? (
+            <>
+              <Overlay
+                onClick={onOverlayClick}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <BigMovie
+                layoutId={bigMovieMatch.params.movieId}
+                bigMovieTop={scrollY.get() + 110}
+              >
+                {clickedMovie && (
+                  <>
+                    <BigCover
+                      style={{
+                        backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                          clickedMovie.backdrop_path
+                        )})`,
+                      }}
+                    />
+                    <BigTitle>{clickedMovie.title}</BigTitle>
+                    <BigOverview>{clickedMovie.overview}</BigOverview>
+                  </>
+                )}
+              </BigMovie>
+            </>
+          ) : null}
+          {popularMatch ? (
+            <>
+              <Overlay
+                onClick={onOverlayClick}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <BigMovie
+                layoutId={popularMatch.params.movieId}
+                bigMovieTop={scrollY.get() + 110}
+              >
+                {clickPopular && (
+                  <>
+                    <BigCover
+                      style={{
+                        backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                          clickPopular.backdrop_path
+                        )})`,
+                      }}
+                    />
+                    <BigTitle>{clickPopular.title}</BigTitle>
+                    <BigOverview>{clickPopular.overview}</BigOverview>
+                  </>
+                )}
+              </BigMovie>
+            </>
+          ) : null}
         </>
       )}
     </Wrapper>
   );
 }
-
 export default Home;
