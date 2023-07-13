@@ -134,6 +134,18 @@ const PrevBtn = styled.div`
   pointer-events: initial;
   cursor: pointer;
 `;
+const Category = styled.h2`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) => props.theme.black.lighter};
+  position: relative;
+  top: -110px;
+  left: 4px;
+  border-radius: 5px;
+  width: 12%;
+  font-size: 20px;
+`;
 
 const nowPlayingDecRowVariants = {
   hidden: {
@@ -297,6 +309,7 @@ function Home() {
             <Title>{nowPlaying?.results[0].title}</Title>
             <Overview>{nowPlaying?.results[0].overview}</Overview>
           </Banner>
+          <Category>Now Playing</Category>
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -336,6 +349,7 @@ function Home() {
               <NextBtn onClick={increaseIndex}>Next</NextBtn>
             </SliderBtn>
           </Slider>
+          <Category style={{ top: "92px" }}>Popular</Category>
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -377,6 +391,7 @@ function Home() {
               <NextBtn onClick={increasePopular}>Next</NextBtn>
             </SliderBtn>
           </Slider>
+
           {bigMovieMatch ? (
             <>
               <Overlay
