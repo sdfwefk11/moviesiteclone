@@ -2,14 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getMovies,
   getPopularMovies,
+  getTopRatedMovie,
   IGetMoviesResult,
   IPopularMovie,
+  ITopRatedMovie,
 } from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -52,7 +55,8 @@ const Row = styled(motion.div)`
 `;
 const Box = styled(motion.div)<{ bgImg: string }>`
   background-color: white;
-  background-image: url(${(props) => props.bgImg});
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)),
+    url(${(props) => props.bgImg});
   background-size: cover;
   background-position: center center;
   height: 120px;
@@ -125,25 +129,26 @@ const SliderBtn = styled.div`
   pointer-events: none;
 `;
 const NextBtn = styled.div`
-  background-color: red;
   cursor: pointer;
   pointer-events: initial;
+  justify-content: center;
+  margin-top: -10px;
 `;
 const PrevBtn = styled.div`
-  background-color: blue;
   pointer-events: initial;
   cursor: pointer;
-`;
-const Category = styled.h2`
   display: flex;
   justify-content: center;
-  align-items: center;
+  margin-top: -10px;
+`;
+const Category = styled.h2`
+  text-align: center;
   background-color: ${(props) => props.theme.black.lighter};
   position: relative;
-  top: -110px;
-  left: 4px;
-  border-radius: 5px;
+  top: -100px;
+  border-radius: 4px;
   width: 12%;
+  padding: 3px;
   font-size: 20px;
 `;
 
@@ -226,14 +231,18 @@ function Home() {
     ["popular", "popularMovies"],
     getPopularMovies
   );
+  const { data: topRatedMovie } = useQuery<ITopRatedMovie>(
+    ["TopRated", "TopRatedMovie"],
+    getTopRatedMovie
+  );
   const [index, setIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
+  const [topRatedIndex, setTopRatedIndex] = useState(0);
   const { scrollY } = useScroll();
   const [direction, setDirection] = useState("next");
   const [popularDirec, setPopularDirec] = useState("next");
   const [leaving, setLeaving] = useState(false);
 
-  console.log(nowPlaying);
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
@@ -345,11 +354,15 @@ function Home() {
               </Row>
             </AnimatePresence>
             <SliderBtn>
-              <PrevBtn onClick={decreaseIndex}>Prev</PrevBtn>
-              <NextBtn onClick={increaseIndex}>Next</NextBtn>
+              <PrevBtn onClick={decreaseIndex}>
+                <GoChevronLeft size={40} />
+              </PrevBtn>
+              <NextBtn onClick={increaseIndex}>
+                <GoChevronRight size={40} />
+              </NextBtn>
             </SliderBtn>
           </Slider>
-          <Category style={{ top: "92px" }}>Popular</Category>
+          <Category style={{ top: "100px" }}>Popular</Category>
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -387,11 +400,24 @@ function Home() {
               </Row>
             </AnimatePresence>
             <SliderBtn style={{ marginTop: "200px" }}>
-              <PrevBtn onClick={decreasePopular}>Prev</PrevBtn>
-              <NextBtn onClick={increasePopular}>Next</NextBtn>
+              <PrevBtn onClick={decreasePopular}>
+                <GoChevronLeft size={40} />
+              </PrevBtn>
+              <NextBtn onClick={increasePopular}>
+                <GoChevronRight size={40} />
+              </NextBtn>
             </SliderBtn>
           </Slider>
-
+          <Category style={{ top: "300px" }}>Top Rated</Category>
+          <Slider>
+            <Row style={{ marginTop: "400px" }}>
+              {topRatedMovie?.results
+                .slice(offset * topRatedIndex, offset * topRatedIndex + offset)
+                .map((item) => (
+                  <Box bgImg={makeImagePath(item.backdrop_path, "w500")} />
+                ))}
+            </Row>
+          </Slider>
           {bigMovieMatch ? (
             <>
               <Overlay
